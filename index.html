@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coupe du Monde 2026 — Huitièmes de finale</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0a0f1e;
+    --surface: #111827;
+    --border: #1e2d45;
+    --gold: #c9a84c;
+    --gold-light: #e8c96e;
+    --silver: #8fa3b8;
+    --green: #22c55e;
+    --red: #ef4444;
+    --amber: #f59e0b;
+    --text: #e8edf5;
+    --muted: #5a7291;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    letter-spacing: 0.04em;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 60%, #fff5cc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+
+  header p {
+    color: var(--silver);
+    font-size: 0.85rem;
+    margin-top: 6px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* SCENARIO SELECTOR */
+  .scenario-section {
+    max-width: 900px;
+    margin: 0 auto 36px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+
+  .scenario-section h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .scenario-section p {
+    font-size: 0.78rem;
+    color: var(--silver);
+    margin-bottom: 16px;
+  }
+
+  .third-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .third-team {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+    background: rgba(255,255,255,0.02);
+  }
+
+  .third-team:hover {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.08);
+  }
+
+  .third-team.selected {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.15);
+  }
+
+  .third-team .flag { font-size: 1.1rem; }
+  .third-team .info { display: flex; flex-direction: column; }
+  .third-team .name { font-size: 0.72rem; font-weight: 600; line-height: 1.2; }
+  .third-team .pts {
+    font-size: 0.65rem;
+    color: var(--muted);
+  }
+
+  .third-team .check {
+    margin-left: auto;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.6rem;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+
+  .third-team.selected .check {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #000;
+  }
+
+  .counter {
+    font-size: 0.8rem;
+    color: var(--silver);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .counter span {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--gold);
+  }
+
+  .counter .warning {
+    color: var(--amber);
+    font-size: 0.72rem;
+  }
+
+  /* BRACKET */
+  .bracket-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .bracket-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .matches-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+
+  .match-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .match-card:hover { border-color: var(--gold); }
+
+  .match-header {
+    background: rgba(201,168,76,0.08);
+    padding: 6px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .match-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+  }
+
+  .match-num {
+    font-size: 0.68rem;
+    color: var(--muted);
+  }
+
+  .team-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(30,45,69,0.5);
+    transition: background 0.15s;
+  }
+
+  .team-row:last-child { border-bottom: none; }
+  .team-row:hover { background: rgba(255,255,255,0.03); }
+
+  .team-flag { font-size: 1.2rem; width: 24px; text-align: center; }
+
+  .team-name {
+    font-size: 0.82rem;
+    font-weight: 500;
+    flex: 1;
+  }
+
+  .team-badge {
+    font-size: 0.62rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-1st { background: rgba(201,168,76,0.2); color: var(--gold); }
+  .badge-2nd { background: rgba(143,163,184,0.15); color: var(--silver); }
+  .badge-3rd { background: rgba(34,197,94,0.15); color: var(--green); }
+  .badge-tbd { background: rgba(245,158,11,0.15); color: var(--amber); }
+
+  .vs-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 0;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid rgba(30,45,69,0.5);
+    background: rgba(0,0,0,0.2);
+  }
+
+  .legend {
+    max-width: 900px;
+    margin: 24px auto 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+
+  .dot {
+    width: 10px; height: 10px; border-radius: 2px;
+  }
+
+  .note {
+    max-width: 900px;
+    margin: 16px auto 0;
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.6;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    border-left: 3px solid var(--gold);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Coupe du Monde 2026</h1>
+  <p>Tableau des huitièmes de finale · Scénarios des meilleurs 3es</p>
+</header>
+
+<!-- THIRD PLACE SELECTOR -->
+<div class="scenario-section">
+  <h2>⚙️ Sélectionner les 8 meilleurs 3es qualifiés</h2>
+  <p>Cliquez sur les équipes pour simuler différents scénarios (exactement 8 équipes).</p>
+
+  <div class="third-grid" id="thirdGrid"></div>
+
+  <div class="counter" id="counter">
+    <span id="countNum">7</span> / 8 sélectionnées
+    <span class="warning" id="warning"></span>
+  </div>
+</div>
+
+<!-- BRACKET -->
+<div class="bracket-wrap">
+  <div class="bracket-title">🏆 Tableau des huitièmes de finale</div>
+  <div class="matches-grid" id="matchesGrid"></div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="dot" style="background:var(--gold)"></div> 1er de groupe</div>
+  <div class="legend-item"><div class="dot" style="background:var(--silver)"></div> 2e de groupe</div>
+  <div class="legend-item"><div class="dot" style="background:var(--green)"></div> Meilleur 3e</div>
+  <div class="legend-item"><div class="dot" style="background:var(--amber)"></div> À déterminer</div>
+</div>
+
+<div class="note" id="note">
+  ℹ️ La FIFA désigne les adversaires des meilleurs 3es selon les groupes dont ils sont issus. Le tableau ci-dessous reflète la structure officielle FIFA 2026 adaptée aux groupes qualifiés.
+</div>
+
+<script>
+// Data
+const thirds = [
+  { id: 'B', flag: '🇧🇦', name: 'Bosnie-Herz.', pts: 4, v:1, n:1, d:1, bf:0 },
+  { id: 'D', flag: '🇵🇾', name: 'Paraguay',     pts: 4, v:1, n:1, d:1, bf:0 },
+  { id: 'E', flag: '🇪🇨', name: 'Équateur',     pts: 4, v:1, n:1, d:1, bf:0 },
+  { id: 'F', flag: '🇸🇪', name: 'Suède',        pts: 4, v:1, n:1, d:1, bf:0 },
+  { id: 'J', flag: '🇩🇿', name: 'Algérie',      pts: 4, v:1, n:1, d:1, bf:0 },
+  { id: 'K', flag: '🇨🇩', name: 'Congo RD',     pts: 4, v:1, n:1, d:1, bf:0 },
+  { id: 'L', flag: '🇬🇭', name: 'Ghana',        pts: 4, v:1, n:1, d:1, bf:0 },
+  { id: 'A', flag: '🇰🇷', name: 'Corée du Sud', pts: 3, v:1, n:0, d:2, bf:-1 },
+  { id: 'C', flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', name: 'Écosse',       pts: 3, v:1, n:0, d:2, bf:-1 },
+  { id: 'I', flag: '🇸🇳', name: 'Sénégal',      pts: 3, v:1, n:0, d:2, bf:-1 },
+  { id: 'G', flag: '🇮🇷', name: 'Iran',         pts: 3, v:0, n:3, d:0, bf:0 },
+  { id: 'H', flag: '🇺🇾', name: 'Uruguay',      pts: 2, v:0, n:2, d:1, bf:-1 },
+];
+
+// Fixed qualified teams
+const groups = {
+  A: { p1: {flag:'🇲🇽', name:'Mexique'}, p2: {flag:'🇿🇦', name:'Afrique du Sud'} },
+  B: { p1: {flag:'🇨🇭', name:'Suisse'}, p2: {flag:'🇨🇦', name:'Canada'} },
+  C: { p1: {flag:'🇧🇷', name:'Brésil'}, p2: {flag:'🇲🇦', name:'Maroc'} },
+  D: { p1: {flag:'🇺🇸', name:'États-Unis'}, p2: {flag:'🇦🇺', name:'Australie'} },
+  E: { p1: {flag:'🇩🇪', name:'Allemagne'}, p2: {flag:'🇨🇮', name:"Côte d'Ivoire"} },
+  F: { p1: {flag:'🇳🇱', name:'Pays-Bas'}, p2: {flag:'🇯🇵', name:'Japon'} },
+  G: { p1: {flag:'🇧🇪', name:'Belgique'}, p2: {flag:'🇪🇬', name:'Égypte'} },
+  H: { p1: {flag:'🇪🇸', name:'Espagne'}, p2: {flag:'🇨🇻', name:'Cap-Vert'} },
+  I: { p1: {flag:'🇫🇷', name:'France'}, p2: {flag:'🇳🇴', name:'Norvège'} },
+  J: { p1: {flag:'🇦🇷', name:'Argentine'}, p2: {flag:'🇦🇹', name:'Autriche'} },
+  K: { p1: {flag:'🇨🇴', name:'Colombie'}, p2: {flag:'🇵🇹', name:'Portugal'} },
+  L: { p1: {flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', name:'Angleterre'}, p2: {flag:'🇭🇷', name:'Croatie'} },
+};
+
+// FIFA 2026 bracket structure (32 teams, 16 matches)
+// Based on official FIFA 2026 bracket layout adapted for 48-team format
+// Matches: [home_desc, away_desc]
+const bracketTemplate = [
+  { label: 'Match 49', home: {type:'1st', group:'A'}, away: {type:'2nd', group:'B'} },
+  { label: 'Match 50', home: {type:'1st', group:'C'}, away: {type:'3rd', slots:['A','B','C']} },
+  { label: 'Match 51', home: {type:'1st', group:'B'}, away: {type:'3rd', slots:['A','B','F']} },
+  { label: 'Match 52', home: {type:'1st', group:'D'}, away: {type:'2nd', group:'C'} },
+  { label: 'Match 53', home: {type:'1st', group:'E'}, away: {type:'3rd', slots:['D','E','F']} },
+  { label: 'Match 54', home: {type:'1st', group:'F'}, away: {type:'2nd', group:'E'} },
+  { label: 'Match 55', home: {type:'1st', group:'G'}, away: {type:'3rd', slots:['G','H','I']} },
+  { label: 'Match 56', home: {type:'1st', group:'H'}, away: {type:'2nd', group:'G'} },
+  { label: 'Match 57', home: {type:'1st', group:'I'}, away: {type:'2nd', group:'J'} },
+  { label: 'Match 58', home: {type:'1st', group:'J'}, away: {type:'3rd', slots:['J','K','L']} },
+  { label: 'Match 59', home: {type:'1st', group:'K'}, away: {type:'2nd', group:'L'} },
+  { label: 'Match 60', home: {type:'1st', group:'L'}, away: {type:'2nd', group:'K'} },
+  { label: 'Match 61', home: {type:'2nd', group:'D'}, away: {type:'3rd', slots:['C','D','E']} },
+  { label: 'Match 62', home: {type:'2nd', group:'F'}, away: {type:'3rd', slots:['B','C','D']} },
+  { label: 'Match 63', home: {type:'2nd', group:'H'}, away: {type:'3rd', slots:['G','H','K']} },
+  { label: 'Match 64', home: {type:'2nd', group:'I'}, away: {type:'3rd', slots:['I','J','L']} },
+];
+
+// Default selection: top 7 (4 pts) + Iran (best 3pt by goal diff = 0)
+let selected = new Set(['B','D','E','F','J','K','L','G']);
+
+function renderThirdGrid() {
+  const grid = document.getElementById('thirdGrid');
+  grid.innerHTML = '';
+  thirds.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'third-team' + (selected.has(t.id) ? ' selected' : '');
+    div.innerHTML = `
+      <span class="flag">${t.flag}</span>
+      <div class="info">
+        <span class="name">${t.name}</span>
+        <span class="pts">Gr. ${t.id} · ${t.pts} pts</span>
+      </div>
+      <div class="check">${selected.has(t.id) ? '✓' : ''}</div>
+    `;
+    div.onclick = () => toggleThird(t.id);
+    grid.appendChild(div);
+  });
+  updateCounter();
+}
+
+function toggleThird(id) {
+  if (selected.has(id)) {
+    selected.delete(id);
+  } else {
+    if (selected.size >= 8) return;
+    selected.add(id);
+  }
+  renderThirdGrid();
+  renderBracket();
+}
+
+function updateCounter() {
+  const n = selected.size;
+  document.getElementById('countNum').textContent = n;
+  const warn = document.getElementById('warning');
+  if (n < 8) warn.textContent = `— Sélectionnez encore ${8 - n} équipe(s)`;
+  else if (n === 8) warn.textContent = '✓ Sélection complète';
+  else warn.textContent = '⚠ Trop d\'équipes sélectionnées';
+}
+
+function getTeam(slot) {
+  const g = groups[slot.group];
+  if (slot.type === '1st') return { flag: g.p1.flag, name: g.p1.name, badge: '1er', cls: 'badge-1st' };
+  if (slot.type === '2nd') return { flag: g.p2.flag, name: g.p2.name, badge: '2e', cls: 'badge-2nd' };
+  if (slot.type === '3rd') {
+    // Find which qualifying third teams came from these slots
+    const candidates = slot.slots.filter(s => selected.has(s));
+    if (candidates.length === 0) return { flag: '❓', name: 'À déterminer', badge: '3e?', cls: 'badge-tbd' };
+    if (candidates.length === 1) {
+      const t = thirds.find(x => x.id === candidates[0]);
+      return { flag: t.flag, name: t.name, badge: `3e Gr.${t.id}`, cls: 'badge-3rd' };
+    }
+    // multiple candidates — show all
+    const names = candidates.map(c => {
+      const t = thirds.find(x => x.id === c);
+      return `${t.flag} ${t.name}`;
+    }).join(' / ');
+    return { flag: '⚖️', name: names, badge: '3e (plusieurs)', cls: 'badge-tbd' };
+  }
+}
+
+function renderBracket() {
+  const grid = document.getElementById('matchesGrid');
+  grid.innerHTML = '';
+  bracketTemplate.forEach((match, i) => {
+    const home = getTeam(match.home);
+    const away = getTeam(match.away);
+    const card = document.createElement('div');
+    card.className = 'match-card';
+    card.innerHTML = `
+      <div class="match-header">
+        <span class="match-label">${match.label}</span>
+        <span class="match-num">H${i+1}</span>
+      </div>
+      <div class="team-row">
+        <span class="team-flag">${home.flag}</span>
+        <span class="team-name">${home.name}</span>
+        <span class="team-badge ${home.cls}">${home.badge}</span>
+      </div>
+      <div class="vs-divider">VS</div>
+      <div class="team-row">
+        <span class="team-flag">${away.flag}</span>
+        <span class="team-name">${away.name}</span>
+        <span class="team-badge ${away.cls}">${away.badge}</span>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+renderThirdGrid();
+renderBracket();
+</script>
+</body>
+</html>
