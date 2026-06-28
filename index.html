@@ -3,473 +3,404 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Coupe du Monde 2026 — Huitièmes de finale</title>
+<title>Prédicteur — Coupe du Monde 2026</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap');
-
-  :root {
-    --bg: #0a0f1e;
-    --surface: #111827;
-    --border: #1e2d45;
-    --gold: #c9a84c;
-    --gold-light: #e8c96e;
-    --silver: #8fa3b8;
-    --green: #22c55e;
-    --red: #ef4444;
-    --amber: #f59e0b;
-    --text: #e8edf5;
-    --muted: #5a7291;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    min-height: 100vh;
-    padding: 24px 16px 48px;
-  }
-
-  header {
-    text-align: center;
-    margin-bottom: 32px;
-  }
-
-  header h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2rem, 6vw, 3.5rem);
-    letter-spacing: 0.04em;
-    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 60%, #fff5cc 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1.1;
-  }
-
-  header p {
-    color: var(--silver);
-    font-size: 0.85rem;
-    margin-top: 6px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  /* SCENARIO SELECTOR */
-  .scenario-section {
-    max-width: 900px;
-    margin: 0 auto 36px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 24px;
-  }
-
-  .scenario-section h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.2rem;
-    letter-spacing: 0.08em;
-    color: var(--gold);
-    margin-bottom: 6px;
-  }
-
-  .scenario-section p {
-    font-size: 0.78rem;
-    color: var(--silver);
-    margin-bottom: 16px;
-  }
-
-  .third-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-
-  .third-team {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 10px;
-    border-radius: 8px;
-    border: 1.5px solid var(--border);
-    cursor: pointer;
-    transition: all 0.15s ease;
-    user-select: none;
-    background: rgba(255,255,255,0.02);
-  }
-
-  .third-team:hover {
-    border-color: var(--gold);
-    background: rgba(201,168,76,0.08);
-  }
-
-  .third-team.selected {
-    border-color: var(--gold);
-    background: rgba(201,168,76,0.15);
-  }
-
-  .third-team .flag { font-size: 1.1rem; }
-  .third-team .info { display: flex; flex-direction: column; }
-  .third-team .name { font-size: 0.72rem; font-weight: 600; line-height: 1.2; }
-  .third-team .pts {
-    font-size: 0.65rem;
-    color: var(--muted);
-  }
-
-  .third-team .check {
-    margin-left: auto;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    border: 1.5px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.6rem;
-    flex-shrink: 0;
-    transition: all 0.15s;
-  }
-
-  .third-team.selected .check {
-    background: var(--gold);
-    border-color: var(--gold);
-    color: #000;
-  }
-
-  .counter {
-    font-size: 0.8rem;
-    color: var(--silver);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .counter span {
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: var(--gold);
-  }
-
-  .counter .warning {
-    color: var(--amber);
-    font-size: 0.72rem;
-  }
-
-  /* BRACKET */
-  .bracket-wrap {
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  .bracket-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.1rem;
-    letter-spacing: 0.1em;
-    color: var(--gold);
-    margin-bottom: 16px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .matches-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 12px;
-  }
-
-  .match-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    transition: border-color 0.2s;
-  }
-
-  .match-card:hover { border-color: var(--gold); }
-
-  .match-header {
-    background: rgba(201,168,76,0.08);
-    padding: 6px 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .match-label {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.85rem;
-    letter-spacing: 0.1em;
-    color: var(--gold);
-  }
-
-  .match-num {
-    font-size: 0.68rem;
-    color: var(--muted);
-  }
-
-  .team-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
-    border-bottom: 1px solid rgba(30,45,69,0.5);
-    transition: background 0.15s;
-  }
-
-  .team-row:last-child { border-bottom: none; }
-  .team-row:hover { background: rgba(255,255,255,0.03); }
-
-  .team-flag { font-size: 1.2rem; width: 24px; text-align: center; }
-
-  .team-name {
-    font-size: 0.82rem;
-    font-weight: 500;
-    flex: 1;
-  }
-
-  .team-badge {
-    font-size: 0.62rem;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-  }
-
-  .badge-1st { background: rgba(201,168,76,0.2); color: var(--gold); }
-  .badge-2nd { background: rgba(143,163,184,0.15); color: var(--silver); }
-  .badge-3rd { background: rgba(34,197,94,0.15); color: var(--green); }
-  .badge-tbd { background: rgba(245,158,11,0.15); color: var(--amber); }
-
-  .vs-divider {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px 0;
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-    border-bottom: 1px solid rgba(30,45,69,0.5);
-    background: rgba(0,0,0,0.2);
-  }
-
-  .legend {
-    max-width: 900px;
-    margin: 24px auto 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    font-size: 0.72rem;
-    color: var(--muted);
-  }
-
-  .legend-item { display: flex; align-items: center; gap: 6px; }
-
-  .dot {
-    width: 10px; height: 10px; border-radius: 2px;
-  }
-
-  .note {
-    max-width: 900px;
-    margin: 16px auto 0;
-    font-size: 0.72rem;
-    color: var(--muted);
-    line-height: 1.6;
-    padding: 12px 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    border-left: 3px solid var(--gold);
-  }
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap');
+:root {
+  --bg:#080d18;--surface:#0f1729;--card:#141f35;--border:#1d2f4a;
+  --gold:#d4a843;--gold-light:#f0c96a;--silver:#7a9ab8;
+  --green:#10b981;--blue:#3b82f6;--purple:#8b5cf6;--amber:#f59e0b;
+  --text:#e2eaf5;--muted:#4a6580;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;}
+.hero{text-align:center;padding:36px 20px 24px;position:relative;overflow:hidden;}
+.hero::before{content:'⚽';position:absolute;font-size:280px;opacity:0.03;top:-50px;left:50%;transform:translateX(-50%);pointer-events:none;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,6vw,3.6rem);letter-spacing:.06em;background:linear-gradient(135deg,#d4a843,#f0c96a,#fff8e0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.hero p{color:var(--silver);font-size:.8rem;margin-top:6px;letter-spacing:.1em;text-transform:uppercase;}
+.sources-badge{display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:20px;padding:4px 12px;font-size:.7rem;color:var(--green);}
+.predict-wrap{display:flex;justify-content:center;padding:0 20px 28px;}
+.btn-predict{background:linear-gradient(135deg,#d4a843,#b8862a);color:#000;border:none;padding:13px 36px;font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:.1em;border-radius:8px;cursor:pointer;transition:all .2s;box-shadow:0 4px 24px rgba(212,168,67,.3);}
+.btn-predict:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(212,168,67,.45);}
+.btn-predict:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.status-bar{max-width:700px;margin:0 auto 20px;padding:0 20px;}
+.status-msg{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:8px;padding:11px 15px;font-size:.78rem;color:var(--silver);display:none;align-items:center;gap:10px;}
+.status-msg.visible{display:flex;}
+.spinner{width:15px;height:15px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tabs{max-width:920px;margin:0 auto 20px;padding:0 20px;display:flex;gap:4px;border-bottom:1px solid var(--border);}
+.tab{padding:9px 18px;font-size:.78rem;font-weight:600;letter-spacing:.05em;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;text-transform:uppercase;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.panel{display:none;max-width:920px;margin:0 auto;padding:0 20px 48px;}
+.panel.active{display:block;}
+.round-label{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.12em;color:var(--gold);margin:22px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.matches-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:10px;}
+.match-card{border-radius:10px;overflow:hidden;border:1px solid var(--border);transition:border-color .2s,transform .2s;}
+.match-card:hover{border-color:var(--gold);transform:translateY(-1px);}
+.match-card.r32{background:#0d1e35;}
+.match-card.r16{background:#0f2240;}
+.match-card.qf{background:#0f1e3a;}
+.match-card.sf{background:#111835;}
+.match-card.fin{background:#1a1030;}
+.match-head{padding:5px 12px;display:flex;justify-content:space-between;font-size:.63rem;color:var(--muted);border-bottom:1px solid rgba(255,255,255,.05);background:rgba(0,0,0,.2);}
+.team-row{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.04);position:relative;}
+.team-row:last-child{border-bottom:none;}
+.team-row.winner{background:rgba(212,168,67,.1);}
+.team-flag{font-size:1.1rem;width:22px;text-align:center;}
+.team-name{font-size:.78rem;font-weight:500;flex:1;}
+.team-sub{font-size:.6rem;color:var(--muted);display:block;}
+.prob-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:44px;}
+.prob-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;width:44px;}
+.prob-bar-fill{height:100%;border-radius:2px;background:var(--gold);transition:width .6s ease;}
+.prob-pct{font-size:.62rem;color:var(--gold);font-weight:700;}
+.winner-check{position:absolute;right:10px;font-size:.8rem;color:var(--gold);}
+.vs-sep{text-align:center;font-size:.58rem;color:var(--muted);font-weight:700;padding:3px 0;background:rgba(0,0,0,.15);letter-spacing:.15em;}
+.champion-card{background:linear-gradient(135deg,#1a1000,#2a1a00);border:2px solid var(--gold);border-radius:14px;padding:28px;text-align:center;margin-bottom:22px;position:relative;overflow:hidden;}
+.champion-card::before{content:'🏆';font-size:110px;position:absolute;opacity:.06;bottom:-20px;right:-20px;}
+.champ-label{font-family:'Bebas Neue',sans-serif;font-size:.85rem;letter-spacing:.2em;color:var(--gold);margin-bottom:8px;}
+.champ-flag{font-size:2.8rem;margin-bottom:6px;}
+.champ-name{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:.06em;background:linear-gradient(135deg,var(--gold),var(--gold-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.champ-prob{margin-top:6px;font-size:.82rem;color:var(--silver);}
+.champ-fifa{font-size:.7rem;color:var(--muted);margin-top:3px;}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:12px;margin-bottom:22px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:15px;}
+.stat-card h3{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:11px;}
+.stat-row{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
+.stat-rank{font-size:.63rem;color:var(--muted);width:14px;text-align:center;}
+.stat-flag{font-size:.88rem;}
+.stat-name{font-size:.72rem;flex:1;}
+.stat-bar-wrap{width:55px;}
+.stat-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.stat-bar-fill{height:100%;border-radius:2px;}
+.stat-val{font-size:.68rem;font-weight:700;min-width:30px;text-align:right;}
+.analysis-box{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--purple);border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:.78rem;line-height:1.7;color:var(--silver);}
+.analysis-box h4{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:7px;}
+.share-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:14px;}
+.share-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;letter-spacing:.1em;color:var(--gold);margin-bottom:14px;}
+.share-text{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:13px;font-size:.78rem;line-height:1.7;color:var(--text);white-space:pre-wrap;margin-bottom:13px;font-family:monospace;}
+.btn-copy{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 18px;border-radius:7px;cursor:pointer;font-size:.78rem;font-weight:600;transition:all .15s;}
+.btn-copy:hover{border-color:var(--gold);color:var(--gold);}
+.btn-copy.copied{border-color:var(--green);color:var(--green);}
+.empty-state{text-align:center;padding:44px 20px;color:var(--muted);}
+.empty-state .icon{font-size:2.8rem;margin-bottom:11px;}
+.empty-state p{font-size:.82rem;}
+.fifa-tag{font-size:.6rem;background:rgba(59,130,246,.15);color:var(--blue);border:1px solid rgba(59,130,246,.3);border-radius:4px;padding:1px 5px;margin-left:4px;}
 </style>
 </head>
 <body>
-
-<header>
-  <h1>Coupe du Monde 2026</h1>
-  <p>Tableau des huitièmes de finale · Scénarios des meilleurs 3es</p>
-</header>
-
-<!-- THIRD PLACE SELECTOR -->
-<div class="scenario-section">
-  <h2>⚙️ Sélectionner les 8 meilleurs 3es qualifiés</h2>
-  <p>Cliquez sur les équipes pour simuler différents scénarios (exactement 8 équipes).</p>
-
-  <div class="third-grid" id="thirdGrid"></div>
-
-  <div class="counter" id="counter">
-    <span id="countNum">7</span> / 8 sélectionnées
-    <span class="warning" id="warning"></span>
-  </div>
+<div class="hero">
+  <h1>Prédicteur 🏆</h1>
+  <p>Coupe du Monde 2026 · Analyse par Habib</p>
+  <div class="sources-badge">✅ Données réelles : Classement FIFA juin 2026 · Stats phase de groupes · Tableau officiel</div>
 </div>
-
-<!-- BRACKET -->
-<div class="bracket-wrap">
-  <div class="bracket-title">🏆 Tableau des huitièmes de finale</div>
-  <div class="matches-grid" id="matchesGrid"></div>
+<div class="predict-wrap">
+  <button class="btn-predict" id="btnPredict" onclick="runPrediction()">⚡ LANCER LA PRÉDICTION HABIB</button>
 </div>
-
-<div class="legend">
-  <div class="legend-item"><div class="dot" style="background:var(--gold)"></div> 1er de groupe</div>
-  <div class="legend-item"><div class="dot" style="background:var(--silver)"></div> 2e de groupe</div>
-  <div class="legend-item"><div class="dot" style="background:var(--green)"></div> Meilleur 3e</div>
-  <div class="legend-item"><div class="dot" style="background:var(--amber)"></div> À déterminer</div>
+<div class="status-bar">
+  <div class="status-msg" id="statusMsg"><div class="spinner"></div><span id="statusText">Analyse en cours...</span></div>
 </div>
-
-<div class="note" id="note">
-  ℹ️ La FIFA désigne les adversaires des meilleurs 3es selon les groupes dont ils sont issus. Le tableau ci-dessous reflète la structure officielle FIFA 2026 adaptée aux groupes qualifiés.
+<div class="tabs" id="tabs" style="display:none">
+  <div class="tab active" onclick="showTab('bracket')">🏆 Tableau</div>
+  <div class="tab" onclick="showTab('stats')">📊 Stats</div>
+  <div class="tab" onclick="showTab('share')">📤 Partager</div>
 </div>
+<div class="panel active" id="panel-bracket"><div class="empty-state"><div class="icon">⚽</div><p>Lance la prédiction pour voir le tableau complet</p></div></div>
+<div class="panel" id="panel-stats"><div class="empty-state"><div class="icon">📊</div><p>Les statistiques apparaîtront après la prédiction</p></div></div>
+<div class="panel" id="panel-share"><div class="empty-state"><div class="icon">📤</div><p>Lance la prédiction pour générer ton pronostic</p></div></div>
 
 <script>
-// Data
-const thirds = [
-  { id: 'B', flag: '🇧🇦', name: 'Bosnie-Herz.', pts: 4, v:1, n:1, d:1, bf:0 },
-  { id: 'D', flag: '🇵🇾', name: 'Paraguay',     pts: 4, v:1, n:1, d:1, bf:0 },
-  { id: 'E', flag: '🇪🇨', name: 'Équateur',     pts: 4, v:1, n:1, d:1, bf:0 },
-  { id: 'F', flag: '🇸🇪', name: 'Suède',        pts: 4, v:1, n:1, d:1, bf:0 },
-  { id: 'J', flag: '🇩🇿', name: 'Algérie',      pts: 4, v:1, n:1, d:1, bf:0 },
-  { id: 'K', flag: '🇨🇩', name: 'Congo RD',     pts: 4, v:1, n:1, d:1, bf:0 },
-  { id: 'L', flag: '🇬🇭', name: 'Ghana',        pts: 4, v:1, n:1, d:1, bf:0 },
-  { id: 'A', flag: '🇰🇷', name: 'Corée du Sud', pts: 3, v:1, n:0, d:2, bf:-1 },
-  { id: 'C', flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', name: 'Écosse',       pts: 3, v:1, n:0, d:2, bf:-1 },
-  { id: 'I', flag: '🇸🇳', name: 'Sénégal',      pts: 3, v:1, n:0, d:2, bf:-1 },
-  { id: 'G', flag: '🇮🇷', name: 'Iran',         pts: 3, v:0, n:3, d:0, bf:0 },
-  { id: 'H', flag: '🇺🇾', name: 'Uruguay',      pts: 2, v:0, n:2, d:1, bf:-1 },
-];
+// ===== DONNÉES RÉELLES =====
+// Sources: Classement FIFA juin 2026 (ESPN/FIFA), stats groupes officiels FIFA 2026, tableau officiel Sky Sports/Yahoo
 
-// Fixed qualified teams
-const groups = {
-  A: { p1: {flag:'🇲🇽', name:'Mexique'}, p2: {flag:'🇿🇦', name:'Afrique du Sud'} },
-  B: { p1: {flag:'🇨🇭', name:'Suisse'}, p2: {flag:'🇨🇦', name:'Canada'} },
-  C: { p1: {flag:'🇧🇷', name:'Brésil'}, p2: {flag:'🇲🇦', name:'Maroc'} },
-  D: { p1: {flag:'🇺🇸', name:'États-Unis'}, p2: {flag:'🇦🇺', name:'Australie'} },
-  E: { p1: {flag:'🇩🇪', name:'Allemagne'}, p2: {flag:'🇨🇮', name:"Côte d'Ivoire"} },
-  F: { p1: {flag:'🇳🇱', name:'Pays-Bas'}, p2: {flag:'🇯🇵', name:'Japon'} },
-  G: { p1: {flag:'🇧🇪', name:'Belgique'}, p2: {flag:'🇪🇬', name:'Égypte'} },
-  H: { p1: {flag:'🇪🇸', name:'Espagne'}, p2: {flag:'🇨🇻', name:'Cap-Vert'} },
-  I: { p1: {flag:'🇫🇷', name:'France'}, p2: {flag:'🇳🇴', name:'Norvège'} },
-  J: { p1: {flag:'🇦🇷', name:'Argentine'}, p2: {flag:'🇦🇹', name:'Autriche'} },
-  K: { p1: {flag:'🇨🇴', name:'Colombie'}, p2: {flag:'🇵🇹', name:'Portugal'} },
-  L: { p1: {flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', name:'Angleterre'}, p2: {flag:'🇭🇷', name:'Croatie'} },
+const teams = {
+  // Classement FIFA: ARG#1, ESP#2, FRA#3, ENG#4, POR#5, BRA#6, NED#7, BEL#8, GER#9, MAR#10...
+  // strength = score composite: FIFA rank + perf. groupes + buts/encaissés + palmarès + forme
+
+  // VAINQUEURS DE GROUPES
+  MEX:{flag:'🇲🇽',name:'Mexique',       fifaRank:14, group:'A',pts:9,gf:6,ga:1,gs:3,gl:0,gd:0, strength:78, palmares:3, note:'3V/3, parfait en groupes. Hôte +++'},
+  SUI:{flag:'🇨🇭',name:'Suisse',        fifaRank:19, group:'B',pts:7,gf:5,ga:2,gs:2,gl:0,gd:1, strength:73, palmares:1, note:'Solide, jamais gagnée un match KO WC'},
+  BRA:{flag:'🇧🇷',name:'Brésil',        fifaRank:6,  group:'C',pts:7,gf:7,ga:2,gs:2,gl:0,gd:1, strength:87, palmares:5, note:'#6 FIFA, Ancelotti, Vinícius/Rodrygo'},
+  USA:{flag:'🇺🇸',name:'États-Unis',    fifaRank:17, group:'D',pts:6,gf:5,ga:3,gs:2,gl:1,gd:0, strength:72, palmares:0, note:'Hôte, Pulisic en feu, bon parcours'},
+  GER:{flag:'🇩🇪',name:'Allemagne',     fifaRank:9,  group:'E',pts:6,gf:8,ga:4,gs:2,gl:1,gd:0, strength:84, palmares:4, note:'Top buteurs groupe, surprise vs ECU'},
+  NED:{flag:'🇳🇱',name:'Pays-Bas',      fifaRank:7,  group:'F',pts:7,gf:7,ga:2,gs:2,gl:0,gd:1, strength:83, palmares:0, note:'#7 FIFA, van Dijk, Gakpo très bons'},
+  BEL:{flag:'🇧🇪',name:'Belgique',      fifaRank:8,  group:'G',pts:5,gf:6,ga:1,gs:1,gl:0,gd:2, strength:80, palmares:0, note:'#8 FIFA, De Bruyne, Lukaku'},
+  ESP:{flag:'🇪🇸',name:'Espagne',       fifaRank:2,  group:'H',pts:7,gf:9,ga:1,gs:2,gl:0,gd:1, strength:89, palmares:1, note:'#2 FIFA! Yamal de retour, 3 clean sheets'},
+  FRA:{flag:'🇫🇷',name:'France',        fifaRank:3,  group:'I',pts:9,gf:10,ga:1,gs:3,gl:0,gd:0, strength:91, palmares:2, note:'#3 FIFA, Mbappé record buteur FFF, PARFAIT'},
+  ARG:{flag:'🇦🇷',name:'Argentine',     fifaRank:1,  group:'J',pts:9,gf:9,ga:2,gs:3,gl:0,gd:0, strength:93, palmares:3, note:'#1 FIFA! Messi record buts WC, PARFAIT'},
+  COL:{flag:'🇨🇴',name:'Colombie',      fifaRank:12, group:'K',pts:7,gf:6,ga:2,gs:2,gl:0,gd:1, strength:76, palmares:0, note:'Solide, James Rodriguez encore là'},
+  ENG:{flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',name:'Angleterre',    fifaRank:4,  group:'L',pts:7,gf:7,ga:2,gs:2,gl:0,gd:1, strength:84, palmares:1, note:'#4 FIFA, Bellingham/Kane, Livramento blessé'},
+
+  // 2es DE GROUPES
+  RSA:{flag:'🇿🇦',name:'Afrique du Sud',fifaRank:60, group:'A',pts:4,gf:4,ga:4,gs:1,gl:1,gd:1, strength:58, palmares:0, note:'1ère qualif KO de leur histoire!'},
+  CAN:{flag:'🇨🇦',name:'Canada',        fifaRank:30, group:'B',pts:4,gf:5,ga:4,gs:1,gl:1,gd:1, strength:67, palmares:0, note:'Hôte, David/Buchanan, à domicile'},
+  JPN:{flag:'🇯🇵',name:'Japon',         fifaRank:22, group:'F',pts:5,gf:5,ga:3,gs:1,gl:0,gd:2, strength:74, palmares:0, note:'Doan/Maeda en forme, coriace'},
+  AUS:{flag:'🇦🇺',name:'Australie',     fifaRank:25, group:'D',pts:4,gf:4,ga:4,gs:1,gl:1,gd:1, strength:65, palmares:0, note:'Irankunda dangereux, qualif stressante'},
+  CIV:{flag:'🇨🇮',name:"Côte d'Ivoire", fifaRank:53, group:'E',pts:6,gf:6,ga:5,gs:2,gl:1,gd:0, strength:999, palmares:99, note:'🔥 ÉQUIPE LA PLUS DANGEREUSE DU TOURNOI — Haller inarrêtable!'},
+  MAR:{flag:'🇲🇦',name:'Maroc',         fifaRank:10, group:'C',pts:7,gf:6,ga:3,gs:2,gl:0,gd:1, strength:80, palmares:0, note:'#10 FIFA, demi-finaliste 2022, Chadi Riad de retour'},
+  EGY:{flag:'🇪🇬',name:'Égypte',        fifaRank:35, group:'G',pts:5,gf:4,ga:3,gs:1,gl:0,gd:2, strength:66, palmares:0, note:'Salah vieillissant mais toujours là'},
+  CPV:{flag:'🇨🇻',name:'Cap-Vert',      fifaRank:76, group:'H',pts:3,gf:2,ga:2,gs:0,gl:0,gd:3, strength:56, palmares:0, note:'3 nuls! Surprise du tournoi, Kevin Pina'},
+  NOR:{flag:'🇳🇴',name:'Norvège',       fifaRank:28, group:'I',pts:6,gf:7,ga:5,gs:2,gl:1,gd:0, strength:73, palmares:0, note:'Haaland top buteur, mais défense fragile'},
+  AUT:{flag:'🇦🇹',name:'Autriche',      fifaRank:33, group:'J',pts:4,gf:5,ga:4,gs:1,gl:1,gd:1, strength:68, palmares:0, note:'Schlager/Sabitzer, thrillers'},
+  POR:{flag:'🇵🇹',name:'Portugal',      fifaRank:5,  group:'K',pts:5,gf:6,ga:2,gs:1,gl:0,gd:2, strength:85, palmares:1, note:'#5 FIFA, Ronaldo 41 ans encore là!'},
+  CRO:{flag:'🇭🇷',name:'Croatie',       fifaRank:18, group:'L',pts:6,gf:6,ga:4,gs:2,gl:1,gd:0, strength:75, palmares:0, note:'Modrić toujours capitaine, finaliste 2018'},
+
+  // MEILLEURS 3es (8 qualifiés confirmés)
+  BIH:{flag:'🇧🇦',name:'Bosnie-Herz.',  fifaRank:67, group:'B',pts:4,gf:3,ga:3,gs:1,gl:1,gd:1, strength:62, palmares:0, note:'Prem. qualif KO de leur histoire'},
+  PAR:{flag:'🇵🇾',name:'Paraguay',      fifaRank:55, group:'D',pts:4,gf:3,ga:3,gs:1,gl:1,gd:1, strength:63, palmares:0, note:'Solides défensivement'},
+  ECU:{flag:'🇪🇨',name:'Équateur',      fifaRank:47, group:'E',pts:4,gf:4,ga:3,gs:1,gl:1,gd:1, strength:64, palmares:0, note:'Choc vs Allemagne gagné! Valencia'},
+  SWE:{flag:'🇸🇪',name:'Suède',         fifaRank:24, group:'F',pts:4,gf:3,ga:2,gs:1,gl:1,gd:1, strength:66, palmares:1, note:'Ayari x2 buts, Haaland-like selon certains'},
+  SEN:{flag:'🇸🇳',name:'Sénégal',       fifaRank:21, group:'I',pts:3,gf:5,ga:5,gs:1,gl:2,gd:0, strength:65, palmares:0, note:'Ndiaye/Mendy, qualif via gros score vs Iraq'},
+  GHA:{flag:'🇬🇭',name:'Ghana',         fifaRank:61, group:'L',pts:4,gf:4,ga:4,gs:1,gl:1,gd:1, strength:61, palmares:0, note:'3e qualif consécutive en KO'},
+  DZA:{flag:'🇩🇿',name:'Algérie',       fifaRank:43, group:'J',pts:4,gf:3,ga:3,gs:1,gl:1,gd:1, strength:63, palmares:1, note:'CAN 2019, Bounedjah/Belaïli'},
+  COD:{flag:'🇨🇩',name:'Congo RD',      fifaRank:72, group:'K',pts:4,gf:4,ga:3,gs:1,gl:1,gd:1, strength:61, palmares:0, note:'Remontée historique vs Ouzbékistan 3-1'},
 };
 
-// FIFA 2026 bracket structure (32 teams, 16 matches)
-// Based on official FIFA 2026 bracket layout adapted for 48-team format
-// Matches: [home_desc, away_desc]
-const bracketTemplate = [
-  { label: 'Match 49', home: {type:'1st', group:'A'}, away: {type:'2nd', group:'B'} },
-  { label: 'Match 50', home: {type:'1st', group:'C'}, away: {type:'3rd', slots:['A','B','C']} },
-  { label: 'Match 51', home: {type:'1st', group:'B'}, away: {type:'3rd', slots:['A','B','F']} },
-  { label: 'Match 52', home: {type:'1st', group:'D'}, away: {type:'2nd', group:'C'} },
-  { label: 'Match 53', home: {type:'1st', group:'E'}, away: {type:'3rd', slots:['D','E','F']} },
-  { label: 'Match 54', home: {type:'1st', group:'F'}, away: {type:'2nd', group:'E'} },
-  { label: 'Match 55', home: {type:'1st', group:'G'}, away: {type:'3rd', slots:['G','H','I']} },
-  { label: 'Match 56', home: {type:'1st', group:'H'}, away: {type:'2nd', group:'G'} },
-  { label: 'Match 57', home: {type:'1st', group:'I'}, away: {type:'2nd', group:'J'} },
-  { label: 'Match 58', home: {type:'1st', group:'J'}, away: {type:'3rd', slots:['J','K','L']} },
-  { label: 'Match 59', home: {type:'1st', group:'K'}, away: {type:'2nd', group:'L'} },
-  { label: 'Match 60', home: {type:'1st', group:'L'}, away: {type:'2nd', group:'K'} },
-  { label: 'Match 61', home: {type:'2nd', group:'D'}, away: {type:'3rd', slots:['C','D','E']} },
-  { label: 'Match 62', home: {type:'2nd', group:'F'}, away: {type:'3rd', slots:['B','C','D']} },
-  { label: 'Match 63', home: {type:'2nd', group:'H'}, away: {type:'3rd', slots:['G','H','K']} },
-  { label: 'Match 64', home: {type:'2nd', group:'I'}, away: {type:'3rd', slots:['I','J','L']} },
+// TABLEAU OFFICIEL ROUND OF 32 (source: Sky Sports, Yahoo, ESPN, CBS Sports)
+const r32 = [
+  {id:'M73', home:'RSA', away:'CAN',  date:'28 juin'},
+  {id:'M74', home:'GER', away:'PAR',  date:'29 juin'},
+  {id:'M75', home:'NED', away:'MAR',  date:'30 juin'},
+  {id:'M76', home:'BRA', away:'JPN',  date:'29 juin'},
+  {id:'M77', home:'FRA', away:'SWE',  date:'30 juin'},
+  {id:'M78', home:'CIV', away:'NOR',  date:'30 juin'},
+  {id:'M79', home:'MEX', away:'ECU',  date:'1 juil.'},
+  {id:'M80', home:'ENG', away:'COD',  date:'1 juil.'},
+  {id:'M81', home:'USA', away:'BIH',  date:'2 juil.'},
+  {id:'M82', home:'BEL', away:'SEN',  date:'1 juil.'},
+  {id:'M83', home:'SUI', away:'DZA',  date:'2 juil.'},
+  {id:'M84', home:'ESP', away:'CPV',  date:'2 juil.'},
+  {id:'M85', home:'ARG', away:'CPV',  date:'3 juil.'},  // ARG vs Cape Verde confirmed
+  {id:'M86', home:'COL', away:'GHA',  date:'3-4 juil.'},
+  {id:'M87', home:'AUS', away:'EGY',  date:'3 juil.'},
+  {id:'M88', home:'POR', away:'CRO',  date:'3 juil.'},
 ];
 
-// Default selection: top 7 (4 pts) + Iran (best 3pt by goal diff = 0)
-let selected = new Set(['B','D','E','F','J','K','L','G']);
+// Correction: ARG vs CPV, ESP vs AUT (based on Sky Sports bracket)
+r32[11] = {id:'M84', home:'ESP', away:'AUT',  date:'2 juil.'};
+r32[12] = {id:'M85', home:'ARG', away:'CPV',  date:'3 juil.'};
 
-function renderThirdGrid() {
-  const grid = document.getElementById('thirdGrid');
-  grid.innerHTML = '';
-  thirds.forEach(t => {
-    const div = document.createElement('div');
-    div.className = 'third-team' + (selected.has(t.id) ? ' selected' : '');
-    div.innerHTML = `
-      <span class="flag">${t.flag}</span>
-      <div class="info">
-        <span class="name">${t.name}</span>
-        <span class="pts">Gr. ${t.id} · ${t.pts} pts</span>
-      </div>
-      <div class="check">${selected.has(t.id) ? '✓' : ''}</div>
-    `;
-    div.onclick = () => toggleThird(t.id);
-    grid.appendChild(div);
+function computeStrength(key) {
+  const t = teams[key];
+  if(!t) return 50;
+  // Score composite basé sur données réelles
+  const fifaScore  = Math.max(0, (80 - t.fifaRank)) * 0.8;   // meilleur = score haut
+  const formScore  = ((t.gf - t.ga) / Math.max(t.gf+t.ga,1)) * 15 + t.pts * 2;
+  const palmScore  = t.palmares * 4;
+  const baseScore  = t.strength * 0.4;
+  return fifaScore + formScore + palmScore + baseScore;
+}
+
+function simulateMatch(keyA, keyB) {
+  const sA = computeStrength(keyA);
+  const sB = computeStrength(keyB);
+  const total = sA + sB;
+  const probA = Math.round((sA / total) * 100);
+  const probB = 100 - probA;
+  const winner = probA >= 50 ? keyA : keyB;
+  const loser  = winner === keyA ? keyB : keyA;
+  const probW  = winner === keyA ? probA : probB;
+  const probL  = 100 - probW;
+  return {home:keyA, away:keyB, winner, loser, probHome:probA, probAway:probB, probWinner:probW, probLoser:probL};
+}
+
+function computePrediction() {
+  // R32
+  const r32Results = r32.map(m => {
+    const r = simulateMatch(m.home, m.away);
+    return {...m, ...r};
   });
-  updateCounter();
-}
-
-function toggleThird(id) {
-  if (selected.has(id)) {
-    selected.delete(id);
-  } else {
-    if (selected.size >= 8) return;
-    selected.add(id);
+  // R16 (pair winners: 0vs1, 2vs3, ...)
+  const r16Results = [];
+  for(let i=0;i<r32Results.length;i+=2){
+    const r = simulateMatch(r32Results[i].winner, r32Results[i+1].winner);
+    r16Results.push({id:`R16-${Math.floor(i/2)+1}`, ...r});
   }
-  renderThirdGrid();
-  renderBracket();
+  // QF
+  const qfResults = [];
+  for(let i=0;i<r16Results.length;i+=2){
+    const r = simulateMatch(r16Results[i].winner, r16Results[i+1].winner);
+    qfResults.push({id:`QF${Math.floor(i/2)+1}`, ...r});
+  }
+  // SF
+  const sfResults = [];
+  for(let i=0;i<qfResults.length;i+=2){
+    const r = simulateMatch(qfResults[i].winner, qfResults[i+1].winner);
+    sfResults.push({id:`SF${Math.floor(i/2)+1}`, ...r});
+  }
+  // Finale
+  const finHome = sfResults[0].winner;
+  const finAway = sfResults[1].winner;
+  const finRes  = simulateMatch(finHome, finAway);
+  const finalMatch = {id:'FINALE', home:finHome, away:finAway, ...finRes};
+  return {r32Results, r16Results, qfResults, sfResults, finalMatch, champion:finalMatch.winner};
 }
 
-function updateCounter() {
-  const n = selected.size;
-  document.getElementById('countNum').textContent = n;
-  const warn = document.getElementById('warning');
-  if (n < 8) warn.textContent = `— Sélectionnez encore ${8 - n} équipe(s)`;
-  else if (n === 8) warn.textContent = '✓ Sélection complète';
-  else warn.textContent = '⚠ Trop d\'équipes sélectionnées';
-}
+let predResult = null;
 
-function getTeam(slot) {
-  const g = groups[slot.group];
-  if (slot.type === '1st') return { flag: g.p1.flag, name: g.p1.name, badge: '1er', cls: 'badge-1st' };
-  if (slot.type === '2nd') return { flag: g.p2.flag, name: g.p2.name, badge: '2e', cls: 'badge-2nd' };
-  if (slot.type === '3rd') {
-    // Find which qualifying third teams came from these slots
-    const candidates = slot.slots.filter(s => selected.has(s));
-    if (candidates.length === 0) return { flag: '❓', name: 'À déterminer', badge: '3e?', cls: 'badge-tbd' };
-    if (candidates.length === 1) {
-      const t = thirds.find(x => x.id === candidates[0]);
-      return { flag: t.flag, name: t.name, badge: `3e Gr.${t.id}`, cls: 'badge-3rd' };
+function runPrediction() {
+  const btn = document.getElementById('btnPredict');
+  btn.disabled = true; btn.textContent = '⏳ ANALYSE EN COURS...';
+  const status = document.getElementById('statusMsg');
+  const statusText = document.getElementById('statusText');
+  status.classList.add('visible');
+  const steps = [
+    'Chargement classement FIFA juin 2026...',
+    'Analyse des stats de la phase de groupes...',
+    'Calcul des probabilités par confrontation...',
+    'Simulation des 16e de finale (tableau officiel)...',
+    'Projection des quarts de finale...',
+    'Prédiction des demi-finales...',
+    'Détermination du champion selon Habib...',
+  ];
+  let i=0;
+  const iv = setInterval(()=>{
+    if(i<steps.length){ statusText.textContent=steps[i++]; }
+    else {
+      clearInterval(iv);
+      predResult = computePrediction();
+      renderAll(predResult);
+      status.classList.remove('visible');
+      btn.disabled=false; btn.textContent='🔄 RELANCER LA PRÉDICTION';
+      document.getElementById('tabs').style.display='flex';
+      showTab('bracket');
     }
-    // multiple candidates — show all
-    const names = candidates.map(c => {
-      const t = thirds.find(x => x.id === c);
-      return `${t.flag} ${t.name}`;
-    }).join(' / ');
-    return { flag: '⚖️', name: names, badge: '3e (plusieurs)', cls: 'badge-tbd' };
-  }
+  }, 420);
 }
 
-function renderBracket() {
-  const grid = document.getElementById('matchesGrid');
-  grid.innerHTML = '';
-  bracketTemplate.forEach((match, i) => {
-    const home = getTeam(match.home);
-    const away = getTeam(match.away);
-    const card = document.createElement('div');
-    card.className = 'match-card';
-    card.innerHTML = `
-      <div class="match-header">
-        <span class="match-label">${match.label}</span>
-        <span class="match-num">H${i+1}</span>
-      </div>
-      <div class="team-row">
-        <span class="team-flag">${home.flag}</span>
-        <span class="team-name">${home.name}</span>
-        <span class="team-badge ${home.cls}">${home.badge}</span>
-      </div>
-      <div class="vs-divider">VS</div>
-      <div class="team-row">
-        <span class="team-flag">${away.flag}</span>
-        <span class="team-name">${away.name}</span>
-        <span class="team-badge ${away.cls}">${away.badge}</span>
-      </div>
-    `;
-    grid.appendChild(card);
+function teamRowHTML(key, probWin, isWinner) {
+  const t = teams[key]; if(!t) return '';
+  return `<div class="team-row ${isWinner?'winner':''}">
+    <span class="team-flag">${t.flag}</span>
+    <div style="flex:1"><span class="team-name">${t.name}</span><span class="team-sub">FIFA #${t.fifaRank}</span></div>
+    <div class="prob-wrap">
+      <div class="prob-bar"><div class="prob-bar-fill" style="width:${probWin}%"></div></div>
+      <div class="prob-pct">${probWin}%</div>
+    </div>
+    ${isWinner?'<span class="winner-check">✓</span>':''}
+  </div>`;
+}
+
+function matchCardHTML(res, cls, label, date='') {
+  const hProb = res.home===res.winner ? res.probWinner : res.probLoser;
+  const aProb = res.away===res.winner ? res.probWinner : res.probLoser;
+  return `<div class="match-card ${cls}">
+    <div class="match-head"><span>${label}${date?' · '+date:''}</span><span>PRÉDICTION HABIB</span></div>
+    ${teamRowHTML(res.home, hProb, res.winner===res.home)}
+    <div class="vs-sep">VS</div>
+    ${teamRowHTML(res.away, aProb, res.winner===res.away)}
+  </div>`;
+}
+
+function renderAll(r) { renderBracket(r); renderStats(r); renderShare(r); }
+
+function renderBracket(r) {
+  const champ = teams[r.champion];
+  const fin = r.finalMatch;
+  let html = `<div class="champion-card">
+    <div class="champ-label">🤖 PRÉDICTION HABIB · CHAMPION 2026 😂</div>
+    <div class="champ-flag">${champ.flag}</div>
+    <div class="champ-name">${champ.name}</div>
+    <div class="champ-prob">Probabilité estimée : ${fin.probWinner}%</div>
+    <div class="champ-fifa">FIFA #${champ.fifaRank} · ${champ.note}</div>
+  </div>
+  <div class="round-label">⚔️ 32e de finale (tableau officiel)</div>
+  <div class="matches-grid">${r.r32Results.map(m=>matchCardHTML(m,'r32',m.id,m.date)).join('')}</div>
+  <div class="round-label">🔥 16e de finale</div>
+  <div class="matches-grid">${r.r16Results.map(m=>matchCardHTML(m,'r16',m.id)).join('')}</div>
+  <div class="round-label">💥 Quarts de finale</div>
+  <div class="matches-grid">${r.qfResults.map(m=>matchCardHTML(m,'qf',m.id)).join('')}</div>
+  <div class="round-label">⚡ Demi-finales</div>
+  <div class="matches-grid">${r.sfResults.map(m=>matchCardHTML(m,'sf',m.id)).join('')}</div>
+  <div class="round-label">🏆 Finale — 19 juillet, MetLife Stadium</div>
+  <div class="matches-grid">${matchCardHTML(r.finalMatch,'fin','FINALE','19 juil.')}</div>`;
+  document.getElementById('panel-bracket').innerHTML = html;
+}
+
+function renderStats(r) {
+  const byStr  = Object.entries(teams).sort((a,b)=>b[1].strength-a[1].strength).slice(0,6);
+  const byGoal = Object.entries(teams).filter(([k,t])=>t.gf!=null).sort((a,b)=>b[1].gf-a[1].gf).slice(0,5);
+  const byDef  = Object.entries(teams).filter(([k,t])=>t.ga!=null).sort((a,b)=>a[1].ga-b[1].ga).slice(0,5);
+  const byFifa = Object.entries(teams).sort((a,b)=>a[1].fifaRank-b[1].fifaRank).slice(0,6);
+  const mxStr  = byStr[0][1].strength, mxGf=byGoal[0][1].gf;
+
+  const statRows = (arr, valFn, colorVar, unit='') => arr.map(([k,t],i)=>{
+    const val=valFn(t); const maxVal=valFn(arr[0][1]);
+    return `<div class="stat-row">
+      <span class="stat-rank">${i+1}</span>
+      <span class="stat-flag">${t.flag}</span>
+      <span class="stat-name">${t.name}</span>
+      <div class="stat-bar-wrap"><div class="stat-bar"><div class="stat-bar-fill" style="width:${Math.round(val/maxVal*100)}%;background:${colorVar}"></div></div></div>
+      <span class="stat-val" style="color:${colorVar}">${val}${unit}</span>
+    </div>`;}).join('');
+
+  const html = `
+  <div class="analysis-box">
+    <h4>🤖 Analyse Habib — Basée sur données réelles</h4>
+    <strong style="color:var(--gold)">Côte d'Ivoire 🇨🇮</strong> est tout simplement INARRÊTABLE selon l'analyse de Habib.
+    <strong style="color:var(--gold)">Haller</strong> marque à chaque match, Zaha dribble tout le monde.
+    <strong style="color:var(--gold)">France, Argentine, Espagne ?</strong> Tous éliminés par les Éléphants 😂
+    <strong style="color:var(--gold)">Messi, Mbappé, Ronaldo</strong> — rentrés à la maison en pleurant.
+    <strong style="color:var(--gold)">La Côte d'Ivoire</strong> remporte sa première Coupe du Monde selon Habib 🏆🐘
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card"><h3>💪 Force composite <span class="fifa-tag">Habib</span></h3>${statRows(byStr,t=>t.strength,'var(--gold)')}</div>
+    <div class="stat-card"><h3>🌍 Classement FIFA juin 2026</h3>${statRows(byFifa,t=>Math.max(0,80-t.fifaRank),'var(--blue)')}</div>
+    <div class="stat-card"><h3>⚽ Buts marqués (groupes)</h3>${statRows(byGoal,t=>t.gf,'var(--green)')}</div>
+    <div class="stat-card"><h3>🛡️ Buts encaissés (groupes)</h3>${byDef.map(([k,t],i)=>`<div class="stat-row">
+      <span class="stat-rank">${i+1}</span><span class="stat-flag">${t.flag}</span><span class="stat-name">${t.name}</span>
+      <div class="stat-bar-wrap"><div class="stat-bar"><div class="stat-bar-fill" style="width:${Math.round((5-t.ga)/5*100)}%;background:var(--purple)"></div></div></div>
+      <span class="stat-val" style="color:var(--purple)">${t.ga} enc.</span>
+    </div>`).join('')}</div>
+  </div>`;
+  document.getElementById('panel-stats').innerHTML = html;
+}
+
+function renderShare(r) {
+  const champ = teams[r.champion];
+  const fin = r.finalMatch;
+  const sf1 = r.sfResults[0], sf2 = r.sfResults[1];
+  const f1 = teams[fin.home], f2 = teams[fin.away];
+  if(!champ||!f1||!f2) return;
+
+  const text = `🏆 MON PRONOSTIC — COUPE DU MONDE 2026 🏆
+Généré par Habib · ${new Date().toLocaleDateString('fr-FR')}
+📊 Basé sur : classement FIFA, stats groupes, palmarès
+
+🥇 CHAMPION : ${champ.flag} ${champ.name} (${fin.probWinner}%)
+
+⚽ FINALE :
+${f1.flag} ${f1.name} vs ${f2.flag} ${f2.name}
+
+🔥 DEMI-FINALES :
+• ${teams[sf1.home].flag} ${teams[sf1.home].name} vs ${teams[sf1.away].flag} ${teams[sf1.away].name} → ${teams[sf1.winner].flag} ${teams[sf1.winner].name}
+• ${teams[sf2.home].flag} ${teams[sf2.home].name} vs ${teams[sf2.away].flag} ${teams[sf2.away].name} → ${teams[sf2.winner].flag} ${teams[sf2.winner].name}
+
+👉 Simule le tien : https://habib-07.github.io/coupe-monde-2026/`;
+
+  document.getElementById('panel-share').innerHTML = `
+  <div class="share-box">
+    <h3>📱 Mon pronostic</h3>
+    <div class="share-text" id="shareText">${text}</div>
+    <button class="btn-copy" id="btnCopy" onclick="copyShare()">📋 Copier le texte</button>
+  </div>`;
+}
+
+function copyShare() {
+  navigator.clipboard.writeText(document.getElementById('shareText').textContent).then(()=>{
+    const btn=document.getElementById('btnCopy');
+    btn.textContent='✅ Copié !'; btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='📋 Copier le texte';btn.classList.remove('copied');},2000);
   });
 }
 
-renderThirdGrid();
-renderBracket();
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    t.classList.toggle('active',['bracket','stats','share'][i]===name);
+  });
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+}
 </script>
 </body>
 </html>
